@@ -118,3 +118,12 @@ def delete_hero_by_id(todo_id: int, session: session):
     session.delete(content)
     session.commit()
     return {"status": "deleted"}
+
+
+@app.delete('/todo')
+def delete_all(session: session):
+    all_content = session.exec(select(Todo)).all()
+    for content in all_content:
+        session.delete(content)
+    session.commit()
+    return {"status": "All content deleted"}
