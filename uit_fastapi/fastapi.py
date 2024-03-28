@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=lifespan, title="Hello World API with DB",
+app = FastAPI(lifespan=lifespan, title="A Todo App",
               version="0.0.1",
               summary='A Todo with a POST DELETE PATCH GET FUNCTIONALITY FOR THE FRONTEND ',
               contact={
@@ -53,7 +53,7 @@ app = FastAPI(lifespan=lifespan, title="Hello World API with DB",
               },
               servers=[
                   {
-                      "url": "http://0.0.0.0:8000",  # ADD NGROK URL Here Before Creating GPT Action
+                      "url": "http://127.0.0.1:8000",  # ADD NGROK URL Here Before Creating GPT Action
                       "description": "Development Server"
                   }
               ])
