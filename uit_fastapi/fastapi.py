@@ -127,5 +127,5 @@ def delete_all(session: session):
         for content in all_content:
             session.delete(content)
         session.commit()
-        return {"status": "All content deleted"}
-    return {"message":"No content Found"}
+        return {"status": "All content deleted successfully"}
+    return {"message": "No content Found"}
