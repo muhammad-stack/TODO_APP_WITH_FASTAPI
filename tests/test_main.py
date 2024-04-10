@@ -14,7 +14,7 @@ def test_read_main():
 
 
 def test_write_main():
-    connection_string = str(settings.TEST_DA TABASE_URL).replace(
+    connection_string = str(settings.TEST_DATABASE_URL).replace(
         "postgresql", "postgresql+psycopg")
     engine = create_engine(
         connection_string, connect_args={"sslmode": "require"}, pool_recycle=300)
