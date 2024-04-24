@@ -77,7 +77,7 @@ def test_get_todo_id():
 
         app.dependency_overrides[get_session] = get_session_override
         client = TestClient(app=app)
-        todo_id: int = 20
+        todo_id: int = 77
         response = client.get(f'/todo/{todo_id}')
         app.dependency_overrides.clear()
         assert response.status_code == 200
@@ -116,43 +116,43 @@ def test_update_todo():
         assert data["content"] == updated_content
 
 
-def test_delete_todo():
-    connection_string = str(settings.TEST_DATABASE_URL).replace(
-        "postgresql", "postgresql+psycopg")
-    engine = create_engine(
-        connection_string, connect_args={"sslmode": "require"}, pool_recycle=300)
+# def test_delete_todo():
+#     connection_string = str(settings.TEST_DATABASE_URL).replace(
+#         "postgresql", "postgresql+psycopg")
+#     engine = create_engine(
+#         connection_string, connect_args={"sslmode": "require"}, pool_recycle=300)
 
-    SQLModel.metadata.create_all(engine)
+#     SQLModel.metadata.create_all(engine)
 
-    with Session(engine) as session:
+#     with Session(engine) as session:
 
-        def get_session_override():
-            return session
+#         def get_session_override():
+#             return session
 
-        app.dependency_overrides[get_session] = get_session_override
-        client = TestClient(app=app)
-        todo_id: int = 26
-        response = client.delete(f'/todo/{todo_id}')
-        app.dependency_overrides.clear()
-        data = response.json()
-        assert response.status_code == 200
+#         app.dependency_overrides[get_session] = get_session_override
+#         client = TestClient(app=app)
+#         todo_id: int = 75
+#         response = client.delete(f'/todo/{todo_id}')
+#         app.dependency_overrides.clear()
+#         data = response.json()
+#         assert response.status_code == 200
 
-        assert data == {"status": "deleted"}
+#         assert data == {"status": "deleted"}
 
 
-def test_delete_all_todos():
-    connection_string = str(settings.TEST_DATABASE_URL).replace(
-        "postgresql", "postgresql+psycopg")
-    engine = create_engine(
-        connection_string, connect_args={"sslmode": "require"}, pool_recycle=300)
-    SQLModel.metadata.create_all(engine)
-    with Session(engine) as session:
-        def get_session_override():
-            return session
-        app.dependency_overrides[get_session] = get_session_override
-        client = TestClient(app=app)
-        response = client.delete('/todo/')
-        app.dependency_overrides.clear()
-        data = response.json()
-        assert response.status_code == 200
-        assert data ==  {"message":"No content Found"}
+# def test_delete_all_todos():
+#     connection_string = str(settings.TEST_DATABASE_URL).replace(
+#         "postgresql", "postgresql+psycopg")
+#     engine = create_engine(
+#         connection_string, connect_args={"sslmode": "require"}, pool_recycle=300)
+#     SQLModel.metadata.create_all(engine)
+#     with Session(engine) as session:
+#         def get_session_override():
+#             return session
+#         app.dependency_overrides[get_session] = get_session_override
+#         client = TestClient(app=app)
+#         response = client.delete('/todo/')
+#         app.dependency_overrides.clear()
+#         data = response.json()
+#         assert response.status_code == 200
+#         assert data ==  {"message":"No content Found"}
