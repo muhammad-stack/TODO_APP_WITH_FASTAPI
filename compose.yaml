@@ -1,0 +1,25 @@
+
+
+name: myapi
+
+services:
+  fastapi:
+    container_name: fastapi
+    hostname: fastapi
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: syedmuhammad5955/hello-world:latest
+    ports:
+      - "8000:8000" # Expose container port 8000 to host port 8000
+
+    volumes:
+      - ./:/code # Mount the current directory (where the Dockerfile is located) to /app
+    
+
+  cloudflare:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflareContainer
+    depends_on:
+      - fastapi
+    command : tunnel --no-autoupdate --url http://fastapi:8000  

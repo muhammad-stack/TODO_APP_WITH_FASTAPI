@@ -1,18 +1,22 @@
 # main.py
 from contextlib import asynccontextmanager
-from typing import Union, Optional, Annotated
+from typing import  Optional, Annotated
+
+from pydantic import BaseModel
 from uit_fastapi import settings
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from fastapi import FastAPI, Depends, HTTPException, Query
 
+class TodoInput(SQLModel):
+    content: str = Field(max_length=35)
+    price: int
 
-class Todo(SQLModel, table=True):
+class Todo(TodoInput, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    content: str = Field(index=True)
-
-
+    
 class Updated_Todo(SQLModel):
     content: Optional[str] = None
+    price : Optional[int] = None
 
 
 # only needed for psycopg 3 - replace postgresql
@@ -25,7 +29,7 @@ connection_string = str(settings.MAIN_DATABASE_URL).replace(
 # recycle connections after 5 minutes
 # to correspond with the compute scale down
 engine = create_engine(
-    connection_string, connect_args={"sslmode": "require"}, pool_recycle=300
+    connection_string, connect_args={}, pool_recycle=300 ,echo=True
 )
 
 
@@ -43,7 +47,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=lifespan, title="A Todo App",
+app = FastAPI(lifespan=lifespan,title="A Todo App",
               version="0.0.1",
               summary='A Todo with a POST DELETE PATCH GET FUNCTIONALITY FOR THE FRONTEND ',
               contact={
@@ -51,12 +55,11 @@ app = FastAPI(lifespan=lifespan, title="A Todo App",
                   "url": "https://www.linkedin.com/in/syed-muhammad-ali-kazmi-b8a0732a0/",
                   "email": "nasi18994@gmail.com",
               },
-              servers=[
-                  {
-                      "url": "http://127.0.0.1:8000",  # ADD NGROK URL Here Before Creating GPT Action
-                      "description": "Development Server"
-                  }
-              ])
+              servers=[{
+            "url": "http://127.0.0.1:8000", # ADD NGROK URL Here Before Creating GPT Action
+            "description": "Development Server"
+        } ])
+        
 
 
 def get_session():
@@ -66,18 +69,19 @@ def get_session():
 
 @app.get("/")
 def read_root():
-    return {"msg": "Hello World"}
+    return {"message": "Hello GPT Actions !!"}
 
 
 session = Annotated[Session, Depends(get_session)]
 
 
-@app.post("/todo", response_model=Todo)
-def create_todo(todo: Todo, session: session):
-    session.add(todo)
+@app.post("/todo", response_model=TodoInput)
+def create_todo(todo: TodoInput, session: session) -> TodoInput:
+    todos = Todo(content=todo.content,price=todo.price)
+    session.add(todos)
     session.commit()
-    session.refresh(todo)
-    return todo
+    session.refresh(todos)
+    return todos
 
 # Offset = Starting Point of Retriving Data
 # Limit = How much data to be fetched in a single request
